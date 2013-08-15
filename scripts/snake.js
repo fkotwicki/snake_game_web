@@ -23,7 +23,7 @@
   }
 
   function getRandomPoint() {
-    return new Point(getRandomInteger(0, (GAME_WIDTH - CELL_SIZE)/CELL_SIZE), getRandomInteger(0, (GAME_HEIGHT - CELL_SIZE)/CELL_SIZE));
+    return new Point(getRandomInteger(0, (GAME_WIDTH - CELL_SIZE) / CELL_SIZE), getRandomInteger(0, (GAME_HEIGHT - CELL_SIZE) / CELL_SIZE));
   }
   
 
@@ -113,22 +113,25 @@
     move: function() {
       var x = this.head().x;
       var y = this.head().y;
+     
       switch(this.moveDirection) {
-        case 1 :
-          x += 1;
-          break;
-        case 2 :
-          x -= 1;
-          break;
-        case 3 :
-          y += 1;
-          break;
-        case 4 :
-          y -= 1;
-          break;
+      case 1 :
+        x += 1;
+        break;
+      case 2 :
+        x -= 1;
+        break;
+      case 3 :
+        y += 1;
+        break;
+      case 4 :
+        y -= 1;
+        break;
       }
-      if(this.selfOwned(new Point(x, y)))
+      
+      if(this.selfOwned(new Point(x, y))) {
         this.isAlive = false;
+      } 
       else {
         var tail = this.body.pop();
         tail.x = x;
@@ -141,10 +144,10 @@
       this.body.forEach(function(elem) {
         ctx.beginPath();
         ctx.rect(elem.x * CELL_SIZE, elem.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-        ctx.fillStyle = "yellow";
+        ctx.fillStyle = "green";
         ctx.fill();  
         ctx.lineWitdh=1;
-        ctx.strokeStyle="black";
+        ctx.strokeStyle="yellow";
         ctx.stroke();
       });
     }
@@ -163,10 +166,10 @@
       if(this.position != undefined) {
         ctx.beginPath();
         ctx.rect(this.position.x * CELL_SIZE, this.position.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-        ctx.fillStyle = "blue";
+        ctx.fillStyle = "red";
         ctx.fill();
         ctx.lineWitdh=1;
-        ctx.strokeStyle="green";
+        ctx.strokeStyle="white";
         ctx.stroke();
       }
     }
@@ -177,26 +180,22 @@
   // Main loop
   
   document.onkeydown = function() {
-     switch(window.event.keyCode) {
-      case 32 :
-        snake.eat();
-        break;
-      case 37:
-        snake.setMoveDirection(direction.left);
-        // snake.move(new Point(-CELL_SIZE, 0));
-        break;
-      case 38 :
-        snake.setMoveDirection(direction.down);
-        // snake.move(new Point(0, -CELL_SIZE));
-        break;
-      case 39 :
-        snake.setMoveDirection(direction.right);
-        // snake.move(new Point(CELL_SIZE, 0));
-        break;
-      case 40 :
-        snake.setMoveDirection(direction.up);
-        // snake.move(new Point(0, CELL_SIZE));
-        break;
+    switch(window.event.keyCode) {
+    case 32 :
+      snake.eat();
+      break;
+    case 37:
+      snake.setMoveDirection(direction.left);
+      break;
+    case 38 :
+      snake.setMoveDirection(direction.down);
+      break;
+    case 39 :
+      snake.setMoveDirection(direction.right);
+      break;
+    case 40 :
+      snake.setMoveDirection(direction.up);
+      break;
     }
   }
 
@@ -204,10 +203,17 @@
     
     if(snake.isAlive) {
       snake.move();
-
-      if(checkCollision(food.position, snake.body)) {
+      
+      // Eat food
+      if(snake.head().x == food.position.x && snake.head().y == food.position.y) {
         snake.eat();
         food.create(); 
+      }
+
+      // Check in bounds
+
+      if(snake.head().x < -1 || snake.head().y < -1 || snake.head().x > GAME_WIDTH / CELL_SIZE || snake.head().y > GAME_HEIGHT / CELL_SIZE) {
+        snake.create();
       }
     } else {
       snake.create();
