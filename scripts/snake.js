@@ -1,45 +1,43 @@
-// Snake game 
+// SNAKE game 
 
-(function(){  
-
-  var Snake = { };
+  var SNAKE = SNAKE || { };
   
   // Get canvas and context
-  Snake.canvas = document.getElementById("gameField");
-  Snake.ctx = Snake.canvas.getContext('2d');
+  SNAKE.canvas = document.getElementById("gameField");
+  SNAKE.ctx = SNAKE.canvas.getContext('2d');
 
   // Game constants
-  Snake.GAME_WIDTH = Snake.canvas.width;
-  Snake.GAME_HEIGHT = Snake.canvas.height;
-  Snake.CELL_SIZE = 25;
-
+  SNAKE.GAME_WIDTH = SNAKE.canvas.width;
+  SNAKE.GAME_HEIGHT = SNAKE.canvas.height;
+  SNAKE.CELL_SIZE = 25;
 
   // Helpers
   
-  Snake.helpers = { };
+  SNAKE.helpers = { };
 
-  Snake.helpers.getRandomInteger = function(min, max) {
+  SNAKE.helpers.getRandomInteger = function(min, max) {
     return Math.floor(Math.random() * ( max - min + 1)) + min;
   }
 
-  Snake.helpers.getRandomPoint = function() {
-    var x = Snake.helpers.getRandomInteger(0, (Snake.GAME_WIDTH - Snake.CELL_SIZE) / Snake.CELL_SIZE);
-    var y = Snake.helpers.getRandomInteger(0, (Snake.GAME_HEIGHT - Snake.CELL_SIZE) / Snake.CELL_SIZE);
-    return new Snake.point(x, y);
+  SNAKE.helpers.getRandomPoint = function() {
+    var x = SNAKE.helpers.getRandomInteger(0, (SNAKE.GAME_WIDTH - SNAKE.CELL_SIZE) / SNAKE.CELL_SIZE);
+    var y = SNAKE.helpers.getRandomInteger(0, (SNAKE.GAME_HEIGHT - SNAKE.CELL_SIZE) / SNAKE.CELL_SIZE);
+    return new SNAKE.point(x, y);
   }
   
-  Snake.helpers.checkCollision = function(point, arrayOfPoints) {
-    var result = false;
-    arrayOfPoints.forEach(function(elem) {
-      if(point.x == elem.x && point.y == elem.y)
-        result = true;
-    });
-    return result;
-  }   
+  SNAKE.helpers.drawSquare = function(fillColor, borderColor, position, size) {
+    SNAKE.ctx.beginPath();
+    SNAKE.ctx.rect(position.x * size, position.y * size, size, size);
+    SNAKE.ctx.fillStyle = fillColor;
+    SNAKE.ctx.fill();  
+    SNAKE.ctx.lineWitdh = 1;
+    SNAKE.ctx.strokeStyle = borderColor;
+    SNAKE.ctx.stroke();
+  }
 
   // Point
 
-  Snake.point = function(x, y) {
+  SNAKE.point = function(x, y) {
     this.x = x;
     this.y = y;
 
@@ -50,7 +48,7 @@
   
   // Direction
 
-  Snake.direction = {
+  SNAKE.direction = {
     right: 1,
     left: 2,
     up: 3,
@@ -59,22 +57,22 @@
 
   /* Game objects */
   
-  Snake.obj = { };
+  SNAKE.obj = { };
 
-  // Snake
+  // SNAKE
 
-  Snake.obj.snake = {
+  SNAKE.obj.snake = {
     body: [],
-    moveDirection: Snake.direction.right,
+    moveDirection: SNAKE.direction.right,
     isAlive: false,
     
     create: function() {
       var length = 5;
       this.isAlive = true;
-      this.moveDirection = Snake.direction.right;
+      this.moveDirection = SNAKE.direction.right;
       this.body = [];
       for(var i = length - 1; i > -1; i -= 1) {
-        this.body.push(new Snake.point(i, 0));
+        this.body.push(new SNAKE.point(i, 0));
       }
     },
 
@@ -89,7 +87,7 @@
     eat: function() {
       var x = this.head().x;
       var y = this.head().y;
-      this.body.unshift(new Snake.point(x, y));
+      this.body.unshift(new SNAKE.point(x, y));
     },
 
     _selfOwned: function(point) {
@@ -132,7 +130,7 @@
         break;
       }
       
-      if(this._selfOwned(new Snake.point(x, y))) {
+      if(this._selfOwned(new SNAKE.point(x, y))) {
         this.isAlive = false;
       } 
       else {
@@ -141,67 +139,53 @@
         tail.y = y;
         this.body.unshift(tail);
       }
-    },
-
-    draw: function() {
-      this.body.forEach(function(elem) {
-        Snake.ctx.beginPath();
-        Snake.ctx.rect(elem.x * Snake.CELL_SIZE, elem.y * Snake.CELL_SIZE, Snake.CELL_SIZE, Snake.CELL_SIZE);
-        Snake.ctx.fillStyle = "green";
-        Snake.ctx.fill();  
-        Snake.ctx.lineWitdh=1;
-        Snake.ctx.strokeStyle="yellow";
-        Snake.ctx.stroke();
-      });
     }
   };
+
+  SNAKE.obj.snake.draw = function() {
+    this.body.forEach(function(elem) {
+      SNAKE.helpers.drawSquare("green", "yellow", elem, SNAKE.CELL_SIZE);
+    });
+  }
 
   // Food 
 
-  Snake.obj.food = {
+  SNAKE.obj.food = {
     position : undefined,
 
     create: function() {
-      this.position = Snake.helpers.getRandomPoint();
-    },
-
-    draw: function() {
-      if(this.position != undefined) {
-        Snake.ctx.beginPath();
-        Snake.ctx.rect(this.position.x * Snake.CELL_SIZE, this.position.y * Snake.CELL_SIZE, Snake.CELL_SIZE, Snake.CELL_SIZE);
-        Snake.ctx.fillStyle = "red";
-        Snake.ctx.fill();
-        Snake.ctx.lineWitdh=1;
-        Snake.ctx.strokeStyle="white";
-        Snake.ctx.stroke();
-      }
+      this.position = SNAKE.helpers.getRandomPoint();
     }
   };
 
+  SNAKE.obj.food.draw = function() {
+    SNAKE.helpers.drawSquare("red", "white", this.position, SNAKE.CELL_SIZE);
+  }
+
   // Game
 
-  Snake.game = { };
+  SNAKE.game = { };
 
-  Snake.game.score = 0;
+  SNAKE.game.score = 0;
 
-  Snake.game.scoreTxt = "Score: ";
+  SNAKE.game.scoreTxt = "Score: ";
 
-  Snake.game.fps = 20;
+  SNAKE.game.fps = 20;
   
-  Snake.game.init = function() {
-    Snake.obj.food.create();
-    Snake.obj.snake.create();
+  SNAKE.game.init = function() {
+    SNAKE.obj.food.create();
+    SNAKE.obj.snake.create();
   }
 
-  Snake.game.reset = function() {
-    Snake.game.score = 0;
-    Snake.obj.snake.create();
+  SNAKE.game.reset = function() {
+    SNAKE.game.score = 0;
+    SNAKE.obj.snake.create();
   }
   
-  Snake.game.getInput = function() {
+  SNAKE.game.getInput = function() {
 
-    var snake = Snake.obj.snake;
-    var direction = Snake.direction;
+    var snake = SNAKE.obj.snake;
+    var direction = SNAKE.direction;
 
     switch(window.event.keyCode) {
     case 32 :
@@ -222,10 +206,10 @@
     }
   }
 
-  Snake.game.update = function() { 
+  SNAKE.game.update = function() { 
 
-    var snake = Snake.obj.snake;
-    var food = Snake.obj.food;
+    var snake = SNAKE.obj.snake;
+    var food = SNAKE.obj.food;
 
     if(snake.isAlive) {
       snake.move();
@@ -234,46 +218,45 @@
       if(snake.head().x == food.position.x && snake.head().y == food.position.y) {
         snake.eat();
         food.create(); 
-        Snake.game.score += 1
+        SNAKE.game.score += 1
       }
 
       // Check in bounds
-      if(snake.head().x == -1 || snake.head().y == -1 || snake.head().x == Snake.GAME_WIDTH / Snake.CELL_SIZE || snake.head().y == Snake.GAME_HEIGHT / Snake.CELL_SIZE) {
-        Snake.game.reset();
+      if(snake.head().x == -1 || snake.head().y == -1 || snake.head().x == SNAKE.GAME_WIDTH / SNAKE.CELL_SIZE || snake.head().y == SNAKE.GAME_HEIGHT / SNAKE.CELL_SIZE) {
+        SNAKE.game.reset();
       }
     } else {
-      Snake.game.reset();
+      SNAKE.game.reset();
     }
   }
 
-  Snake.game.draw = function() { 
+  SNAKE.game.draw = function() { 
     // Draw canvas
-    Snake.ctx.fillStyle = "black";
-    Snake.ctx.fillRect(0, 0, Snake.canvas.width, Snake.canvas.height);
+    SNAKE.ctx.fillStyle = "black";
+    SNAKE.ctx.fillRect(0, 0, SNAKE.canvas.width, SNAKE.canvas.height);
     
     // Draw objects
-    Snake.obj.snake.draw();
-    Snake.obj.food.draw();
+    SNAKE.obj.snake.draw();
+    SNAKE.obj.food.draw();
     
     // Draw score
-    Snake.ctx.fillStyle = "blue";
-    Snake.ctx.font = "bold 16px Arial";
-    Snake.ctx.fillText(Snake.game.scoreTxt + Snake.game.score, 10, Snake.GAME_HEIGHT - 10);
+    SNAKE.ctx.fillStyle = "blue";
+    SNAKE.ctx.font = "bold 16px Arial";
+    SNAKE.ctx.fillText(SNAKE.game.scoreTxt + SNAKE.game.score, 10, SNAKE.GAME_HEIGHT - 10);
   }
 
-  Snake.game.run = function() {
-    Snake.game.update();
-    Snake.game.draw();
+  SNAKE.game.run = function() {
+    SNAKE.game.update();
+    SNAKE.game.draw();
   }
   
   // Main Loop
 
-  Snake.game.init();
-  Snake.game._intervalId = setInterval(Snake.game.run, 1000 / Snake.game.fps);
+  SNAKE.game.init();
+  SNAKE.game._intervalId = setInterval(SNAKE.game.run, 1000 / SNAKE.game.fps);
 
   // Handle input
   
-  document.onkeydown = Snake.game.getInput;
+  document.onkeydown = SNAKE.game.getInput;
   
   
-})();
