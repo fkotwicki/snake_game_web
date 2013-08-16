@@ -170,7 +170,7 @@
 
   SNAKE.game.scoreTxt = "Score: ";
 
-  SNAKE.game.fps = 20;
+  SNAKE.game.fps = 15;
   
   SNAKE.game.init = function() {
     SNAKE.obj.food.create();
