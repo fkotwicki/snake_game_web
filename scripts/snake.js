@@ -17,13 +17,13 @@
 
   SNAKE.helpers.getRandomInteger = function(min, max) {
     return Math.floor(Math.random() * ( max - min + 1)) + min;
-  }
+  };
 
   SNAKE.helpers.getRandomPoint = function() {
     var x = SNAKE.helpers.getRandomInteger(0, (SNAKE.GAME_WIDTH - SNAKE.CELL_SIZE) / SNAKE.CELL_SIZE);
     var y = SNAKE.helpers.getRandomInteger(0, (SNAKE.GAME_HEIGHT - SNAKE.CELL_SIZE) / SNAKE.CELL_SIZE);
     return new SNAKE.point(x, y);
-  }
+  };
   
   SNAKE.helpers.drawSquare = function(fillColor, borderColor, position, size) {
     SNAKE.ctx.beginPath();
@@ -33,18 +33,14 @@
     SNAKE.ctx.lineWitdh = 1;
     SNAKE.ctx.strokeStyle = borderColor;
     SNAKE.ctx.stroke();
-  }
+  };
 
   // Point
 
   SNAKE.point = function(x, y) {
     this.x = x;
     this.y = y;
-
-    this.toString = function() {
-      return "[x: " + this.x + " y:" + this.y+ "]";
-    }
-  }
+  };
   
   // Direction
 
@@ -146,7 +142,7 @@
     this.body.forEach(function(elem) {
       SNAKE.helpers.drawSquare("green", "yellow", elem, SNAKE.CELL_SIZE);
     });
-  }
+  };
 
   // Food 
 
@@ -160,7 +156,7 @@
 
   SNAKE.obj.food.draw = function() {
     SNAKE.helpers.drawSquare("red", "white", this.position, SNAKE.CELL_SIZE);
-  }
+  };
 
   // Game
 
@@ -175,12 +171,12 @@
   SNAKE.game.init = function() {
     SNAKE.obj.food.create();
     SNAKE.obj.snake.create();
-  }
+  };
 
   SNAKE.game.reset = function() {
     SNAKE.game.score = 0;
     SNAKE.obj.snake.create();
-  }
+  };
   
   SNAKE.game.getInput = function() {
 
@@ -204,7 +200,7 @@
       snake.setMoveDirection(direction.up);
       break;
     }
-  }
+  };
 
   SNAKE.game.update = function() { 
 
@@ -228,7 +224,7 @@
     } else {
       SNAKE.game.reset();
     }
-  }
+  };
 
   SNAKE.game.draw = function() { 
     // Draw canvas
@@ -243,12 +239,12 @@
     SNAKE.ctx.fillStyle = "blue";
     SNAKE.ctx.font = "bold 16px Arial";
     SNAKE.ctx.fillText(SNAKE.game.scoreTxt + SNAKE.game.score, 10, SNAKE.GAME_HEIGHT - 10);
-  }
+  };
 
   SNAKE.game.run = function() {
     SNAKE.game.update();
     SNAKE.game.draw();
-  }
+  };
   
   // Main Loop
 
